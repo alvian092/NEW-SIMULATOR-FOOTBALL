@@ -1,6 +1,11 @@
 name: Download Football-Data CSV Archive
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/download_football_data.py'
+      - '.github/workflows/download-football-data.yml'
   workflow_dispatch:
   schedule:
     - cron: "30 3 * * 1"
