@@ -1,0 +1,29 @@
+name: Download Football-Data CSV Archive
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 3 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download and combine five seasons
+        run: python scripts/download_football_data.py
+      - name: Upload CSV dataset
+        uses: actions/upload-artifact@v4
+        with:
+          name: Football-Quant-Lab-5-Seasons-CSV
+          path: |
+            dist/matches.csv
+            dist/football-data-5-seasons.zip
+          if-no-files-found: error
+          retention-days: 30
