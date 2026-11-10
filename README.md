@@ -1,19 +1,27 @@
 # Football Quant Lab
 
-Android-native football probability simulator with a Monte Carlo engine, private app-local CSV storage, and a Prediction Tracker.
+Android football probability simulator with a **CSV-first, offline architecture**. No API key, provider account, cloud backend, or manual server setup is required.
+
+## Data flow
+
+1. Import a CSV from the Android document picker.
+2. The app copies it into private app storage as `matches.csv`; the dataset remains available after closing and reopening the app.
+3. Choose the competition, home team, away team, and fixture date from the imported dataset.
+4. The simulator reads each team's 20 most recent matches before the fixture date and derives expected goals from the CSV xG columns.
+5. Save the prediction in the local Prediction Tracker, then enter the actual score after the match.
+
+## Required CSV columns
+
+`date,home_team,away_team,home_goals,away_goals,home_xg,away_xg`
+
+Optional column: `competition`.
+
+Use dates in ISO format (`YYYY-MM-DD`). Include numeric xG values for both teams. The app must not invent missing xG. Each selected team needs 20 prior matches with usable xG data for a prediction.
 
 ## Build
 
-The GitHub Actions workflow builds a debug APK with Java 17 and Gradle 8.9. Artifact: `Football-Quant-Lab-debug-apk`.
+GitHub Actions builds the Android debug APK with Java 17 and Gradle 8.9. Workflow artifact: `Football-Quant-Lab-debug-apk`.
 
-## Current foundation
+## Model limitations
 
-- 10,000-run Monte Carlo simulation using independent Poisson goal models
-- Home win, draw, away win, and under/over 4.5 goal estimates
-- CSV import through Android's document picker; imported file is copied into app-private storage and remains available between launches
-- Save a prediction before kickoff and record the actual score in Prediction Tracker
-- Dark dashboard with mint-green accents, responsive stacked cards, and progress-style probability presentation
-
-## Important model note
-
-The current engine uses expected-goals (xG) inputs and independent Poisson sampling. Imported CSV files are persistently stored but are not yet used to train or calibrate the model. Model calibration, richer tracker evaluation metrics, and device-level QA are next steps. Probabilities are estimates, never guarantees.
+The current prediction engine uses independent Poisson goal sampling with 10,000 iterations. It is a probability estimate, not a guarantee. CSV import and local storage do not require an internet connection after the file has been selected.
